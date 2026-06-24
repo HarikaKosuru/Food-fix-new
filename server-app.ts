@@ -1,7 +1,7 @@
 import express from "express";
 import { Type } from "@google/genai";
 import {
-  ai,
+  getGeminiClient,
   POLICY_DOCUMENT,
   SUPPORT_PROMPT_TEMPLATE,
   IMAGE_COMPLAINT_PROMPT_TEMPLATE,
@@ -29,7 +29,7 @@ app.post("/api/text-query", async (req, res) => {
         .replace("{policy_document}", POLICY_DOCUMENT)
         .replace("{user_input}", customer_query);
 
-    const response = await ai.models.generateContent({
+    const response = await getGeminiClient().models.generateContent({
         model: "gemini-3.5-flash",
         contents: promptText,
         config: {
@@ -69,7 +69,7 @@ app.post("/api/image-query", async (req, res) => {
         .replace("{policy_document}", POLICY_DOCUMENT)
         .replace("{user_input}", customer_query || "Food quality complaint with uploaded image");
 
-    const response = await ai.models.generateContent({
+    const response = await getGeminiClient().models.generateContent({
         model: "gemini-3.5-flash",
         contents: [
             { text: promptText },

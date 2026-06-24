@@ -1,4 +1,4 @@
-import { ai, POLICY_DOCUMENT, IMAGE_COMPLAINT_PROMPT_TEMPLATE, formatHistory, parseImageResponse } from './_shared';
+import { getGeminiClient, POLICY_DOCUMENT, IMAGE_COMPLAINT_PROMPT_TEMPLATE, formatHistory, parseImageResponse } from './_shared';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
@@ -14,7 +14,7 @@ export default async function handler(req: any, res: any) {
         .replace("{policy_document}", POLICY_DOCUMENT)
         .replace("{user_input}", customer_query || "Food quality complaint with uploaded image");
 
-    const response = await ai.models.generateContent({
+    const response = await getGeminiClient().models.generateContent({
         model: "gemini-3.5-flash",
         contents: [
             { text: promptText },

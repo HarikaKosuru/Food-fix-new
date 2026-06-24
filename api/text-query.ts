@@ -1,5 +1,5 @@
 import { Type } from "@google/genai";
-import { ai, POLICY_DOCUMENT, SUPPORT_PROMPT_TEMPLATE, formatHistory } from './_shared';
+import { getGeminiClient, POLICY_DOCUMENT, SUPPORT_PROMPT_TEMPLATE, formatHistory } from './_shared';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
@@ -15,7 +15,7 @@ export default async function handler(req: any, res: any) {
         .replace("{policy_document}", POLICY_DOCUMENT)
         .replace("{user_input}", customer_query);
 
-    const response = await ai.models.generateContent({
+    const response = await getGeminiClient().models.generateContent({
         model: "gemini-3.5-flash",
         contents: promptText,
         config: {

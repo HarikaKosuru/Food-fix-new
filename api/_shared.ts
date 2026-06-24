@@ -1,11 +1,22 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-export const ai = new GoogleGenAI({
-  apiKey: process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY,
-  httpOptions: {
-    headers: { 'User-Agent': 'aistudio-build' }
+let aiInstance: GoogleGenAI | null = null;
+
+export function getGeminiClient(): GoogleGenAI {
+  if (!aiInstance) {
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+    if (!apiKey) {
+      throw new Error("GEMINI_API_KEY is missing from Vercel's environment variables. Please add GEMINI_API_KEY to your Vercel dashboard under Project Settings > Environment Variables.");
+    }
+    aiInstance = new GoogleGenAI({
+      apiKey: apiKey,
+      httpOptions: {
+        headers: { 'User-Agent': 'aistudio-build' }
+      }
+    });
   }
-});
+  return aiInstance;
+}
 
 export const POLICY_DOCUMENT = `
 FoodFix Customer Support Policy
