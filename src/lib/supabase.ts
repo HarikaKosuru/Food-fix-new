@@ -35,6 +35,10 @@ export const supabase = new Proxy({} as SupabaseClient, {
 
 export let isSupabaseConfigured = !!client;
 
+export function getIsSupabaseConfigured() {
+  return !!client || isSupabaseConfigured;
+}
+
 export function setSupabaseConfig(url: string, key: string) {
   if (url && key) {
     try {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { supabase, getIsSupabaseConfigured } from '../lib/supabase';
 import { Mail, Lock, ArrowRight, Sparkles, ShieldCheck, AlertCircle, KeyRound, ArrowLeft, Loader2, Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -30,7 +30,7 @@ export const LoginPage = () => {
   };
 
   const handleOAuthLogin = async () => {
-    if (!isSupabaseConfigured) {
+    if (!getIsSupabaseConfigured()) {
       setMessage({ type: 'error', text: 'Supabase is not configured. Please configure your environment variables.' });
       return;
     }
@@ -89,7 +89,7 @@ export const LoginPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isSupabaseConfigured) {
+    if (!getIsSupabaseConfigured()) {
       setMessage({ type: 'error', text: 'Supabase is not configured. Please configure your environment variables.' });
       return;
     }

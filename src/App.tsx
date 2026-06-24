@@ -4,14 +4,14 @@
  */
 
 import { useState, useEffect } from 'react';
-import { supabase, isSupabaseConfigured, setSupabaseConfig } from './lib/supabase';
+import { supabase, getIsSupabaseConfigured, setSupabaseConfig } from './lib/supabase';
 import { FoodFixMain } from './components/FoodFixMain';
 import { LoginPage } from './components/LoginPage';
 
 export default function App() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [isConfigured, setIsConfigured] = useState(isSupabaseConfigured);
+  const [isConfigured, setIsConfigured] = useState(getIsSupabaseConfigured());
 
   useEffect(() => {
     const initAuth = async () => {
@@ -28,8 +28,8 @@ export default function App() {
         console.error('Failed to load Supabase configuration from server:', err);
       }
 
-      // Update configured state
-      const configured = isSupabaseConfigured;
+      // Update configured state using the dynamic getter helper
+      const configured = getIsSupabaseConfigured();
       setIsConfigured(configured);
 
       if (configured) {
@@ -72,16 +72,22 @@ export default function App() {
     };
 
     initAuth();
+  }, []);
 
-    // Listen for auth changes if configured
+  // Listen for auth changes after the config has been fully set up
+  useEffect(() => {
+    if (!isConfigured) return;
+
     let subscription: any = null;
     try {
-      const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-        setSession(session);
+      console.log('Registering active Supabase auth listener on the configured client');
+      const { data } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+        console.log('Supabase auth state changed:', _event, currentSession?.user?.email);
+        setSession(currentSession);
       });
       subscription = data?.subscription;
     } catch (err) {
-      console.warn('Auth change listener registration deferred:', err);
+      console.error('Error registering active auth listener:', err);
     }
 
     return () => {
@@ -89,7 +95,7 @@ export default function App() {
         subscription.unsubscribe();
       }
     };
-  }, []);
+  }, [isConfigured]);
 
   if (loading) {
     return (
