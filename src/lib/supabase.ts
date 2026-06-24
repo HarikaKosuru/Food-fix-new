@@ -1,9 +1,10 @@
+/// <reference types="vite/client" />
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 let client: SupabaseClient | null = null;
 
-const staticUrl = (import.meta as any).env?.VITE_SUPABASE_URL;
-const staticKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY;
+const staticUrl = import.meta.env.VITE_SUPABASE_URL;
+const staticKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (staticUrl && staticKey) {
   client = createClient(staticUrl, staticKey);
